@@ -2,6 +2,7 @@ import { useCallback, useMemo, useState } from 'react'
 import cx from 'classnames'
 import useSocket from '../providers/useSocket'
 import useChat from '../providers/useChat'
+import AudioRecorder from '../providers/AudioRecorder'
 import TextInput from './TextInput'
 
 export default function Chat() {
@@ -37,6 +38,7 @@ export default function Chat() {
       <form onSubmit={handleSubmit} className="message-form">
         <TextInput name="message" placeholder="Type message" value={value} onChange={setValue}/>
         <button type="submit" className="button">Send</button>
+        <AudioRecorder/>
       </form>
     </div>
   )
