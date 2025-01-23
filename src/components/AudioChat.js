@@ -4,6 +4,7 @@ import useSocket from '../providers/useSocket'
 import useChat from '../providers/useChat'
 import Audio from './Audio'
 import user from '../img/user.svg'
+import Chat from './Chat'
 
 export default function AudioChat() {
   const socket = useSocket()
@@ -22,6 +23,7 @@ export default function AudioChat() {
       <ul className="users-list">
         {userItems}
       </ul>
+      <Chat />
     </div>
   )
 }

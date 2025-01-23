@@ -2,6 +2,7 @@ body,
 html {
   padding: 0;
   margin: 0;
+  font-family: Arial, sans-serif;
 }
 
 * {
@@ -13,21 +14,27 @@ html {
   display: flex;
   justify-content: center;
   align-items: center;
+  padding: 20px;
 }
 
 .login-form {
+  width: 100%;
+  max-width: 400px;
   padding: 20px;
   border: 1px solid #ecebeb;
   border-radius: 6px;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
 }
 
 .audio-chat {
   width: 100%;
-  max-width: 1000px;
-  height: 600px;
+  max-width: 800px;
   margin: 20px;
   display: flex;
+  flex-direction: column;
   border: 1px solid #ecebeb;
   border-radius: 6px;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
@@ -35,22 +42,28 @@ html {
 }
 
 .users-list {
-  width: 300px;
+  width: 100%;
   padding: 20px 0;
   margin: 0;
-  overflow-y: auto;
-  border-right: 1px solid #ecebeb;
+  overflow-x: auto;
+  display: flex;
   list-style: none;
+  background-color: #f9f9f9;
 }
 
 .user {
-  width: 100%;
+  min-width: 200px;
   padding: 10px;
   display: flex;
   align-items: center;
   overflow: hidden;
   text-overflow: ellipsis;
   color: #d78d2c;
+  border-right: 1px solid #ecebeb;
+}
+
+.user:last-child {
+  border-right: none;
 }
 
 .user:nth-of-type(2n) {
@@ -163,4 +176,29 @@ html {
   border: none;
   outline: none;
   cursor: pointer;
+}
+
+@media (max-width: 768px) {
+  .wrapper {
+    padding: 10px;
+  }
+
+  .login-form {
+    max-width: 100%;
+    padding: 15px;
+  }
+
+  .audio-chat {
+    margin: 10px;
+    height: auto;
+  }
+
+  .users-list {
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .user {
+    min-width: 150px;
+  }
 }

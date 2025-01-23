@@ -78,25 +78,43 @@ export function useAudioRecorder() {
 const style = document.createElement('style')
 style.textContent = `
   .recorder-controls {
-    display: flex
-    gap: 8px
-    align-items: center
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+  }
+
+  .record-button {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #2ca4d7;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s;
   }
 
   .record-button.recording {
-    background-color: #ff4444
+    background-color: #ff4444;
   }
 
   .record-button.recording:hover {
-    background-color: #cc3333
+    background-color: #cc3333;
   }
 
   .save-button {
-    background-color: #4CAF50
+    background-color: #4CAF50;
+    width: 100%;
+    margin-top: 10px;
   }
 
   .save-button:hover {
-    background-color: #45a049
+    background-color: #45a049;
   }
 `
 document.head.appendChild(style)
@@ -115,7 +133,7 @@ export default function AudioRecorder() {
       {!isRecording ? (
         <button
           onClick={startRecording}
-          className={cx('button', 'record-button')}
+          className={cx('record-button')}
           type="button"
         >
           Record
@@ -123,7 +141,7 @@ export default function AudioRecorder() {
       ) : (
         <button
           onClick={stopRecording}
-          className={cx('button', 'record-button', 'recording')}
+          className={cx('record-button', 'recording')}
           type="button"
         >
           Stop
@@ -136,7 +154,7 @@ export default function AudioRecorder() {
           className={cx('button', 'save-button')}
           type="button"
         >
-          Save
+          Save Recording
         </button>
       )}
     </div>
