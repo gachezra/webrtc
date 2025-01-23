@@ -1,17 +1,24 @@
 import { useEffect, useState } from 'react'
 import useSocket from '../providers/useSocket'
 import ChatProvider from '../providers/ChatProvider'
-import LoginForm from '../components/LoginForm'
 import AudioChat from '../components/AudioChat'
+import { useSearchParams } from 'react-router-dom'
 
 export default function Main() {
   const socket = useSocket()
-  const [submitted, setSubmitted] = useState(false)
-  const handleSubmit = ({ login }) => {
-    socket.login = login
-    socket.emit('join', { login })
-    setSubmitted(true)
-  }
+  const [searchParams] = useSearchParams()
+  const [username, setUsername] = useState(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const extractedUsername = searchParams.get('username')
+    if (extractedUsername) {
+      setUsername(extractedUsername)
+      socket.login = extractedUsername
+      socket.emit('join', { login: extractedUsername })
+    }
+    setLoading(false)
+  }, [searchParams])
 
   useEffect(() => {
     return () => {
@@ -19,16 +26,19 @@ export default function Main() {
     }
   }, []) // eslint-disable-line
 
+  if (loading) {
+    return <div>Loading.</div>
+  }
+
   return (
-    <div className="wrapper">
-      {!submitted
-        ? <LoginForm onSubmit={handleSubmit}/>
-        : (
-          <ChatProvider>
-            <AudioChat/>
-          </ChatProvider>
-        )
-      }
-    </div>
+    <>
+      {username ? (
+        <ChatProvider>
+          <AudioChat />
+        </ChatProvider>
+      ) : (
+        <div>No username provided in the URL.</div>
+      )}
+    </>
   )
 }
