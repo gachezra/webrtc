@@ -2,7 +2,6 @@ import { useMemo } from 'react'
 import cx from 'classnames'
 import useSocket from '../providers/useSocket'
 import useChat from '../providers/useChat'
-import Chat from './Chat'
 import Audio from './Audio'
 import user from '../img/user.svg'
 
@@ -23,7 +22,6 @@ export default function AudioChat() {
       <ul className="users-list">
         {userItems}
       </ul>
-      <Chat/>
     </div>
   )
 }
