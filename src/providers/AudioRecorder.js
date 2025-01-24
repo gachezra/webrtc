@@ -61,17 +61,16 @@ export function useAudioRecorder() {
     }
 
     try {
-      const data = await s3.upload(params).promise()
-      .then((data) => {
-        console.log('Upload Success', data)
+      const { Location } = await s3.upload(params).promise()
+      .then(() => {
+        console.log('Upload Success', Location)
       })
-      const audioUrl = data.Location
       const chatId = localStorage.getItem('chatId')
 
       // Send audio URL to your backend (instead of the Telegram API directly)
       await axios.post('https://kadi-bot.onrender.com/api/send-audio', {
         chatId,
-        audioUrl
+        Location
       })
     } catch (error) {
       console.error('Error uploading to S3', error)
