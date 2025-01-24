@@ -62,9 +62,9 @@ export function useAudioRecorder() {
 
     try {
       const data = await s3.upload(params).promise()
-      // .then((data) => {
-      //   console.log('Upload Success', data)
-      // })
+      .then((data) => {
+        console.log('Upload Success', data)
+      })
       const audioUrl = data.Location
       const chatId = localStorage.getItem('chatId')
 
