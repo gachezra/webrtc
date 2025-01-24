@@ -1,11 +1,22 @@
 import { useState, useEffect, useCallback, useContext } from 'react'
 import cx from 'classnames'
 import { ChatContext } from './ChatProvider'
+import AWS from 'aws-sdk'
+import { Buffer } from 'buffer'
+
+const s3 = new AWS.S3({
+  endpoint: 'https://s3.tebi.io',
+  accessKeyId: 'xFBgncfuBMjrkkMF',
+  secretAccessKey: 'LwV3UON29392J3jIoXdu5jOotoEy7L9iddadvjrj',
+  region: 'us-east-1',
+  signatureVersion: 'v4',
+})
 
 export function useAudioRecorder() {
   const [isRecording, setIsRecording] = useState(false)
   const [mediaRecorder, setMediaRecorder] = useState(null)
   const [audioChunks, setAudioChunks] = useState([])
+
   const { streams } = useContext(ChatContext)
 
   const startRecording = useCallback(() => {
@@ -39,24 +50,40 @@ export function useAudioRecorder() {
     }
   }, [mediaRecorder])
 
+  // Upload the audio recording to S3
+  const uploadRecording = useCallback(async (blob) => {
+    // const buffer = await blob.arrayBuffer()
+    // const file = new Buffer(buffer)
+
+    const params = {
+      Bucket: 'kadi',
+      Key: `uploads/chat-recording-${new Date().toISOString()}.webm`,  // Path and file name in the 'uploads' folder
+      Body: blob,
+      ContentType: 'audio/webm',
+      ACL: 'public-read',
+    }
+
+    try {
+      await s3.upload(params).promise().then((data) => {
+        console.log('Upload Success', data)
+      })
+    } catch (error) {
+      console.error('Error uploading to S3', error)
+    }
+  }, [])
+
   const saveRecording = useCallback(() => {
     if (audioChunks.length === 0) return
-
+  
     const blob = new Blob(audioChunks, { type: 'audio/webm' })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = `chat-recording-${new Date().toISOString()}.webm`
-    document.body.appendChild(a)
-    a.click()
-    
-    setTimeout(() => {
-      document.body.removeChild(a)
-      URL.revokeObjectURL(url)
-    }, 100)
-    
+  
+    // Upload to S3
+    uploadRecording(blob)
+  
+    // Clear the audio chunks after uploading
     setAudioChunks([])
-  }, [audioChunks])
+  }, [audioChunks, uploadRecording])
+  
 
   useEffect(() => {
     return () => {
