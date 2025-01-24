@@ -8,14 +8,22 @@ export default function Main() {
   const socket = useSocket()
   const [searchParams] = useSearchParams()
   const [username, setUsername] = useState(null)
+  const [chatId, setChatId] = useState(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const extractedUsername = searchParams.get('username')
-    if (extractedUsername) {
-      setUsername(extractedUsername)
-      socket.login = extractedUsername
-      socket.emit('join', { login: extractedUsername })
+    const extractedParam = searchParams.get('username')
+    if (extractedParam) {
+      const [extractedUsername, extractedChatId] = extractedParam.split('_') // Split into username and chatId
+      if (extractedUsername && extractedChatId) {
+        setUsername(extractedUsername)
+        setChatId(extractedChatId)
+        localStorage.setItem('chatId', extractedChatId)
+        socket.login = extractedUsername
+        socket.emit('join', { login: extractedUsername }) // Send both username and chatId
+      } else {
+        console.warn('Invalid username format in URL.')
+      }
     }
     setLoading(false)
   }, [searchParams])

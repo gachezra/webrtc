@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, useContext } from 'react'
 import cx from 'classnames'
 import { ChatContext } from './ChatProvider'
 import AWS from 'aws-sdk'
-import { Buffer } from 'buffer'
+import axios from 'axios'
 
 const s3 = new AWS.S3({
   endpoint: 'https://s3.tebi.io',
@@ -52,9 +52,6 @@ export function useAudioRecorder() {
 
   // Upload the audio recording to S3
   const uploadRecording = useCallback(async (blob) => {
-    // const buffer = await blob.arrayBuffer()
-    // const file = new Buffer(buffer)
-
     const params = {
       Bucket: 'kadi',
       Key: `uploads/chat-recording-${new Date().toISOString()}.webm`,  // Path and file name in the 'uploads' folder
@@ -64,8 +61,17 @@ export function useAudioRecorder() {
     }
 
     try {
-      await s3.upload(params).promise().then((data) => {
-        console.log('Upload Success', data)
+      const data = await s3.upload(params).promise()
+      // .then((data) => {
+      //   console.log('Upload Success', data)
+      // })
+      const audioUrl = data.Location
+      const chatId = localStorage.getItem('chatId')
+
+      // Send audio URL to your backend (instead of the Telegram API directly)
+      await axios.post('https://kadi-bot.onrender.com/api/send-audio', {
+        chatId,
+        audioUrl
       })
     } catch (error) {
       console.error('Error uploading to S3', error)
